@@ -1,38 +1,40 @@
 import { useEffect, useState } from "react";
 
-export default function App() {
-  const [cookie, setCookie] = useState("");
+const API = "https://done-2cbv.onrender.com";
 
-  // получить cookie с сервера
-  async function fetchCookie() {
-    const res = await fetch("https://done-2cbv.onrender.com/get-cookie", {
+export default function App() {
+  const [session, setSession] = useState("");
+
+  // 🔍 получить cookie
+  async function fetchMe() {
+    const res = await fetch(`${API}/me`, {
       credentials: "include"
     });
 
     const data = await res.json();
-    setCookie(data.cookie);
+    setSession(data.session);
   }
 
-  // установить cookie
-  async function setCookieServer() {
-    await fetch("https://done-2cbv.onrender.com/set-cookie", {
+  // 🍪 login (ставим cookie)
+  async function login() {
+    await fetch(`${API}/login`, {
       credentials: "include"
     });
 
-    fetchCookie();
+    fetchMe();
   }
 
-  // удалить cookie
-  async function deleteCookie() {
-    await fetch("https://done-2cbv.onrender.com/delete-cookie", {
+  // ❌ logout
+  async function logout() {
+    await fetch(`${API}/logout`, {
       credentials: "include"
     });
 
-    fetchCookie();
+    fetchMe();
   }
 
   useEffect(() => {
-    fetchCookie();
+    fetchMe();
   }, []);
 
   return (
@@ -40,19 +42,19 @@ export default function App() {
       height: "100vh",
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
       justifyContent: "center",
+      alignItems: "center",
       fontFamily: "Arial"
     }}>
       
-      <h1>🍪 Cookie App (React + Express)</h1>
+      <h1>🍪 Cookie App</h1>
 
-      <button onClick={setCookieServer}>
-        Установить cookie
+      <button onClick={login}>
+        Login
       </button>
 
-      <button onClick={deleteCookie}>
-        Удалить cookie
+      <button onClick={logout}>
+        Logout
       </button>
 
       <div style={{
@@ -61,8 +63,8 @@ export default function App() {
         background: "#eee",
         borderRadius: 10
       }}>
-        {cookie
-          ? "Cookie: " + cookie
+        {session
+          ? "Cookie: " + session
           : "Cookie нет"}
       </div>
     </div>
