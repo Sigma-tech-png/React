@@ -1,19 +1,70 @@
 import { useEffect, useState } from "react";
 
-function App() {
-  const [data, setData] = useState("");
+export default function App() {
+  const [cookie, setCookie] = useState("");
+
+  // получить cookie с сервера
+  async function fetchCookie() {
+    const res = await fetch("https://done-2cbv.onrender.com/get-cookie", {
+      credentials: "include"
+    });
+
+    const data = await res.json();
+    setCookie(data.cookie);
+  }
+
+  // установить cookie
+  async function setCookieServer() {
+    await fetch("https://done-2cbv.onrender.com/set-cookie", {
+      credentials: "include"
+    });
+
+    fetchCookie();
+  }
+
+  // удалить cookie
+  async function deleteCookie() {
+    await fetch("https://done-2cbv.onrender.com/delete-cookie", {
+      credentials: "include"
+    });
+
+    fetchCookie();
+  }
 
   useEffect(() => {
-    fetch("https://done-2cbv.onrender.com/api")
-      .then(res => res.json())
-      .then(data => setData(data.message));
+    fetchCookie();
   }, []);
 
   return (
-    <div>
-      <h1>{data}</h1>
+    <div style={{
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "Arial"
+    }}>
+      
+      <h1>🍪 Cookie App (React + Express)</h1>
+
+      <button onClick={setCookieServer}>
+        Установить cookie
+      </button>
+
+      <button onClick={deleteCookie}>
+        Удалить cookie
+      </button>
+
+      <div style={{
+        marginTop: 20,
+        padding: 20,
+        background: "#eee",
+        borderRadius: 10
+      }}>
+        {cookie
+          ? "Cookie: " + cookie
+          : "Cookie нет"}
+      </div>
     </div>
   );
 }
-
-export default App;
